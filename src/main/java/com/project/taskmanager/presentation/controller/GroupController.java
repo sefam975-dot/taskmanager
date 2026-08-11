@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/groups")
 @RequiredArgsConstructor
@@ -37,6 +39,18 @@ public class GroupController {
     @GetMapping("/{id}")
     public ResponseEntity<GroupResponse> getGroupById(@PathVariable Long id) {
         GroupResponse response = groupService.getGroupById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<GroupResponse>> getGroupsByUser(@PathVariable Long userId) {
+        List<GroupResponse> response = groupService.getGroupsByUserId(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GroupResponse>> getAllActiveGroups() {
+        List<GroupResponse> response = groupService.getAllActiveGroups();
         return ResponseEntity.ok(response);
     }
 

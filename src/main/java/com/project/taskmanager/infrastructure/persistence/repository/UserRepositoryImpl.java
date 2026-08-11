@@ -7,6 +7,7 @@ import com.project.taskmanager.infrastructure.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -33,5 +34,12 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByUsername(String username) {
         return jpaRepository.findByUsernameAndIsActiveTrue(username)
                 .map(userMapper::toDomain);
+    }
+
+    @Override
+    public List<User> findAllActive() {
+        return jpaRepository.findByIsActiveTrueOrderByCreatedAtDesc().stream()
+                .map(userMapper::toDomain)
+                .toList();
     }
 }

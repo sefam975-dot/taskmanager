@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,28 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new GroupNotFoundException("Group not found"));
         return groupMapper.toResponse(group);
+    }
+
+    @Override
+    public List<GroupResponse> getGroupsByUserId(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return userGroupRepository.findByUserId(userId).stream()
+                .map(UserGroup::getGroupId)
+                .distinct()
+                .map(groupId -> groupRepository.findById(groupId)
+                        .orElseThrow(() -> new GroupNotFoundException("Group not found")))
+                .filter(group -> Boolean.TRUE.equals(group.getIsActive()))
+                .map(groupMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<GroupResponse> getAllActiveGroups() {
+        return groupRepository.findAllActive().stream()
+                .map(groupMapper::toResponse)
+                .toList();
     }
 
     @Override

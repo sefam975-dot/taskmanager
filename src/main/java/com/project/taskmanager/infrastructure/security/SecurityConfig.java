@@ -23,11 +23,16 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
 
+
+
+
+
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new UserNotFoundException("User not found"));
+
             return new org.springframework.security.core.userdetails.User(
                     user.getUsername(),
                     user.getPassword(),
@@ -35,12 +40,16 @@ public class SecurityConfig {
                     true,
                     true,
                     true,
-                    Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()))            );
+                    Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()))
+            );
         };
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider authenticationProvider(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder
+    ) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);

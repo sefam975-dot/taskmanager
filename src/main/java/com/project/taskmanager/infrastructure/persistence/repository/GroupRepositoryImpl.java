@@ -7,6 +7,7 @@ import com.project.taskmanager.infrastructure.persistence.entity.GroupEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -33,5 +34,12 @@ public class GroupRepositoryImpl implements GroupRepository {
     public Optional<Group> findByName(String name) {
         return jpaRepository.findByNameAndIsActiveTrue(name)
                 .map(groupMapper::toDomain);
+    }
+
+    @Override
+    public List<Group> findAllActive() {
+        return jpaRepository.findByIsActiveTrueOrderByCreatedAtDesc().stream()
+                .map(groupMapper::toDomain)
+                .toList();
     }
 }
